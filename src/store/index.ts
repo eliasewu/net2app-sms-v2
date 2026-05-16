@@ -310,9 +310,11 @@ export const useStore = create<Store>()(
       // ─── Clients ─────────────────────────────────────────
       clients: [],
       setClients: (clients) => set({ clients }),
-      addClient: (data) => {
+      addClient: async (data) => {
         const c = { ...data, id: uuidv4(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() } as Client;
         set(s => ({ clients: [...s.clients, c] }));
+        // Persist to backend
+        api('POST', '/clients', data);
         api('POST', '/clients', c);
       },
       updateClient: (id, data) => {
@@ -606,6 +608,10 @@ export const useStore = create<Store>()(
         apiTemplates: state.apiTemplates,
         initialized: state.initialized,
       }),
+    },
+    {
+      name: 'net2app-sms-store',
+      version: 2, // Bump to clear old cache
     }
   )
 );

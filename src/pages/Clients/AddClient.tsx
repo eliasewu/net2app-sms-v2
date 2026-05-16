@@ -43,6 +43,7 @@ export function AddClient() {
 
   useEffect(() => {
     if (id) {
+      // Try store first, then API
       const client = getClient(id);
       if (client) {
         setFormData({
@@ -70,7 +71,40 @@ export function AddClient() {
           maxTps: client.maxTps,
           creditLimit: client.creditLimit,
           balance: client.balance,
-          ipWhitelist: client.ipWhitelist.join(', ')
+          ipWhitelist: (client.ipWhitelist || []).join ? (client.ipWhitelist || []).join(', ') : ''
+        });
+      } else {
+        // Fetch from API directly
+        fetch(`/api/clients/${id}`).then(r => r.json()).then(c => {
+          if (c && c.id) {
+            setFormData({
+              clientCode: c.clientCode || '',
+              companyName: c.companyName || '',
+              contactPerson: c.contactPerson || '',
+              email: c.email || '',
+              phone: c.phone || '',
+              address: c.address || '',
+              country: c.country || '',
+              billingType: c.billingType || 'prepaid',
+              billingMode: c.billingMode || 'submit',
+              currency: c.currency || 'USD',
+              connectionMode: c.connectionMode || 'server',
+              smppUsername: c.smppUsername || '',
+              smppPassword: c.smppPassword || '',
+              smppIp: c.smppIp || '',
+              smppPort: c.smppPort || 2775,
+              smppSystemType: c.smppSystemType || '',
+              smppTps: c.smppTps || 100,
+              smppBindType: c.smppBindType || 'transceiver',
+              apiEnabled: c.apiEnabled || false,
+              forceDlr: c.forceDlr || false,
+              forceDlrTimeout: c.forceDlrTimeout || 60,
+              maxTps: c.maxTps || 100,
+              creditLimit: c.creditLimit || 0,
+              balance: c.balance || 0,
+              ipWhitelist: (c.ipWhitelist || []).join ? (c.ipWhitelist || []).join(', ') : ''
+            });
+          }
         });
       }
     }
