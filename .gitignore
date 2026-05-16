@@ -1,0 +1,14 @@
+.env
+*.env
+backend/.env
+backend/venv/
+node_modules/
+dist/
+logs/
+*.log
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+.DS_Store
+credentials.txt
