@@ -43,7 +43,7 @@ export function NotificationsList() {
   const [filterType, setFilterType] = useState<NotificationType | 'all'>('all');
   const [filterRead, setFilterRead] = useState<'all' | 'read' | 'unread'>('all');
 
-  const filteredNotifications = notifications.filter((notif) => {
+  const filteredNotifications = (notifications || []).filter((notif) => {
     const matchesType = filterType === 'all' || notif.type === filterType;
     const matchesRead =
       filterRead === 'all' ||
@@ -52,7 +52,7 @@ export function NotificationsList() {
     return matchesType && matchesRead;
   });
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = (notifications || []).filter(n => !n.isRead).length;
 
   return (
     <div className="space-y-6">

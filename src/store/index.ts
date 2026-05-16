@@ -250,15 +250,15 @@ export const useStore = create<Store>()(
           ...(plansRes ? { routingPlans: plansRes } : {}),
           ...(mccRes ? { mccMnc: mccRes } : {}),
           ...(ratesRes ? { rates: ratesRes } : {}),
-          ...(logsRes ? { smsLogs: logsRes } : {}),
+          ...(logsRes ? { smsLogs: (logsRes.logs || logsRes) } : {}),
           ...(paymentsRes ? { payments: paymentsRes } : {}),
           ...(invoicesRes ? { invoices: invoicesRes } : {}),
-          ...(notifsRes ? { notifications: notifsRes } : {}),
+          ...(notifsRes ? { notifications: (Array.isArray(notifsRes) ? notifsRes : (notifsRes.notifications || notifsRes.data || [])) } : {}),
           ...(settingsRes ? { notificationSettings: settingsRes } : {}),
           ...(templatesRes ? { emailTemplates: templatesRes } : {}),
-          ...(campaignsRes ? { campaigns: campaignsRes } : {}),
+          ...(campaignsRes ? { campaigns: (Array.isArray(campaignsRes) ? campaignsRes : (campaignsRes.campaigns || campaignsRes.data || [])) } : {}),
           ...(apiTplRes ? { apiTemplates: apiTplRes } : {}),
-          ...(translationsRes ? { translations: translationsRes } : {}),
+          ...(translationsRes ? { translations: (Array.isArray(translationsRes) ? translationsRes : (translationsRes.translations || [])) } : {}),
           ...(licenseRes ? { license: licenseRes } : {}),
           initialized: true,
           loading: false,
@@ -569,22 +569,22 @@ export const useStore = create<Store>()(
       getDashboardStats: () => {
         const state = get();
         const today = new Date().toDateString();
-        const todayLogs = state.smsLogs.filter(l => new Date(l.createdAt).toDateString() === today);
+        const todayLogs = (state.smsLogs || []).filter(l => new Date(l.createdAt).toDateString() === today);
         return {
           totalMessages: todayLogs.length,
-          deliveredMessages: todayLogs.filter(l => l.status === 'delivered').length,
-          failedMessages: todayLogs.filter(l => l.status === 'failed').length,
-          revenue: todayLogs.reduce((s, l) => s + l.clientRate, 0),
-          profit: todayLogs.reduce((s, l) => s + l.profit, 0),
-          activeClients: state.clients.filter(c => c.isActive).length,
-          activeSuppliers: state.suppliers.filter(s => s.isActive).length,
-          bindUpClients: state.clients.filter(c => c.smppStatus === 'bound').length,
-          bindDownClients: state.clients.filter(c => c.smppStatus !== 'bound').length,
+          deliveredMessages: (todayLogs || []).filter(l => l.status === 'delivered').length,
+          failedMessages: (todayLogs || []).filter(l => l.status === 'failed').length,
+          revenue: (todayLogs || []).reduce((s, l) => s + l.clientRate, 0),
+          profit: (todayLogs || []).reduce((s, l) => s + l.profit, 0),
+          activeClients: (state.clients || []).filter(c => c.isActive).length,
+          activeSuppliers: (state.suppliers || []).filter(s => s.isActive).length,
+          bindUpClients: (state.clients || []).filter(c => c.smppStatus === 'bound').length,
+          bindDownClients: (state.clients || []).filter(c => c.smppStatus !== 'bound').length,
         };
       },
     }),
     {
-      name: 'net2app-sms-store',
+      name: 'net2app-sms-v3',
       // Only persist essential data, not functions
       partialize: (state) => ({
         currentUser: state.currentUser,
@@ -610,8 +610,8 @@ export const useStore = create<Store>()(
       }),
     },
     {
-      name: 'net2app-sms-store',
-      version: 2, // Bump to clear old cache
+      name: 'net2app-sms-v3',
+      version: 200, // Bump to clear old cache
     }
   )
 );

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useStore } from './store';
@@ -40,6 +41,7 @@ function App() {
   }, [loadAll]);
 
   return (
+    <ErrorBoundary>
     <BrowserRouter>
       <Toaster position="top-right" />
       <Routes>
@@ -124,6 +126,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

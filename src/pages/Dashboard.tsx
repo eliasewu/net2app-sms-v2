@@ -38,7 +38,7 @@ export function Dashboard() {
   // Generate hourly data for chart
   const hourlyData = Array.from({ length: 24 }, (_, i) => {
     const hour = i.toString().padStart(2, '0') + ':00';
-    const logsInHour = smsLogs.filter(log => {
+    const logsInHour = (smsLogs || []).filter(log => {
       const logHour = new Date(log.createdAt).getHours();
       return logHour === i;
     });
@@ -52,23 +52,23 @@ export function Dashboard() {
 
   // Status distribution
   const statusData = [
-    { name: 'Delivered', value: smsLogs.filter(l => l.status === 'delivered').length },
-    { name: 'Failed', value: smsLogs.filter(l => l.status === 'failed').length },
-    { name: 'Pending', value: smsLogs.filter(l => l.status === 'pending').length },
-    { name: 'Submitted', value: smsLogs.filter(l => l.status === 'submitted').length }
+    { name: 'Delivered', value: (smsLogs || []).filter(l => l.status === 'delivered').length },
+    { name: 'Failed', value: (smsLogs || []).filter(l => l.status === 'failed').length },
+    { name: 'Pending', value: (smsLogs || []).filter(l => l.status === 'pending').length },
+    { name: 'Submitted', value: (smsLogs || []).filter(l => l.status === 'submitted').length }
   ].filter(d => d.value > 0);
 
   // Low balance clients
-  const lowBalanceClients = clients.filter(c => c.balance < 100 && c.isActive);
+  const lowBalanceClients = (clients || []).filter(c => c.balance < 100 && c.isActive);
 
   // Failing suppliers (mock 15 consecutive failures)
-  const failingSuppliers = suppliers.filter(s => s.smppStatus === 'error');
+  const failingSuppliers = (suppliers || []).filter(s => s.smppStatus === 'error');
 
   // Recent unread notifications
-  const recentAlerts = notifications.filter(n => !n.isRead).slice(0, 5);
+  const recentAlerts = (notifications || []).filter(n => !n.isRead).slice(0, 5);
 
   // Country distribution from logs
-  const countryStats = smsLogs.reduce((acc, log) => {
+  const countryStats = (smsLogs || []).reduce((acc, log) => {
     acc[log.country] = (acc[log.country] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);

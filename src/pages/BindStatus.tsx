@@ -18,21 +18,21 @@ export function BindStatus() {
   const [filter, setFilter] = useState<'all' | 'clients' | 'suppliers'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'bound' | 'unbound' | 'error'>('all');
 
-  const filteredClients = clients.filter(c => 
+  const filteredClients = (clients || []).filter(c => 
     (statusFilter === 'all' || c.smppStatus === statusFilter)
   );
 
-  const filteredSuppliers = suppliers.filter(s => 
+  const filteredSuppliers = (suppliers || []).filter(s => 
     (statusFilter === 'all' || s.smppStatus === statusFilter)
   );
 
   const stats = {
     totalClients: clients.length,
-    boundClients: clients.filter(c => c.smppStatus === 'bound').length,
+    boundClients: (clients || []).filter(c => c.smppStatus === 'bound').length,
     totalSuppliers: suppliers.length,
-    boundSuppliers: suppliers.filter(s => s.connectionType === 'smpp' && s.smppStatus === 'bound').length,
-    errors: clients.filter(c => c.smppStatus === 'error').length + 
-            suppliers.filter(s => s.smppStatus === 'error').length
+    boundSuppliers: (suppliers || []).filter(s => s.connectionType === 'smpp' && s.smppStatus === 'bound').length,
+    errors: (clients || []).filter(c => c.smppStatus === 'error').length + 
+            (suppliers || []).filter(s => s.smppStatus === 'error').length
   };
 
   const toggleClientBind = (clientId: string, currentStatus: string) => {

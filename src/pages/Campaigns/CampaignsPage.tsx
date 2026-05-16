@@ -22,12 +22,12 @@ export function CampaignsPage() {
 
   const stats = {
     total: campaigns.length,
-    running: campaigns.filter(c => c.status === 'running').length,
-    scheduled: campaigns.filter(c => c.status === 'scheduled').length,
-    completed: campaigns.filter(c => c.status === 'completed').length
+    running: (campaigns || []).filter(c => c.status === 'running').length,
+    scheduled: (campaigns || []).filter(c => c.status === 'scheduled').length,
+    completed: (campaigns || []).filter(c => c.status === 'completed').length
   };
 
-  const filteredCampaigns = campaigns.filter(c =>
+  const filteredCampaigns = (campaigns || []).filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.clientName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -237,7 +237,7 @@ export function CampaignsPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Client *</label>
             <select required value={formData.clientId} onChange={(e) => setFormData({...formData, clientId: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                <option value="">Select Client</option>
-               {clients.map(c => <option key={c.id} value={c.id}>{c.companyName}</option>)}
+               {(clients || []).map(c => <option key={c.id} value={c.id}>{c.companyName}</option>)}
             </select>
           </div>
           <div>

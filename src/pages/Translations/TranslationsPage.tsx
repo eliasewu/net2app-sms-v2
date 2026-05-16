@@ -66,7 +66,7 @@ export function TranslationsPage() {
   const emptyForm = { entityType: 'client' as 'client' | 'supplier', entityId: '', name: '', priority: 1, type: 'number' as Translation['type'], matchPattern: '', replacePattern: '' };
   const [formData, setFormData] = useState(emptyForm);
 
-  const filtered = translations.filter(t => {
+  const filtered = (translations || []).filter(t => {
     const ms = !searchQuery || t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.matchPattern.includes(searchQuery);
     const me = filterEntity === 'all' || t.entityType === filterEntity;
     const mt = filterType === 'all' || t.type === filterType;
@@ -207,7 +207,7 @@ export function TranslationsPage() {
             <div><label className="block text-sm font-medium text-gray-700 mb-1">{formData.entityType === 'client' ? 'Client' : 'Supplier'} *</label>
               <select value={formData.entityId} onChange={e => setFormData({ ...formData, entityId: e.target.value })} required className={sel} disabled={formMode === 'edit'}>
                 <option value="">Select...</option>
-                {formData.entityType === 'client' ? clients.map(c => <option key={c.id} value={c.id}>{c.clientCode}</option>) : suppliers.map(s => <option key={s.id} value={s.id}>{s.supplierCode}</option>)}
+                {formData.entityType === 'client' ? (clients || []).map(c => <option key={c.id} value={c.id}>{c.clientCode}</option>) : (suppliers || []).map(s => <option key={s.id} value={s.id}>{s.supplierCode}</option>)}
               </select></div>
           </div>
 

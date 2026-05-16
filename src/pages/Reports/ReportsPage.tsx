@@ -28,8 +28,8 @@ export function ReportsPage() {
   // Calculate stats
   const stats = {
     totalMessages: smsLogs.length,
-    delivered: smsLogs.filter(l => l.status === 'delivered').length,
-    failed: smsLogs.filter(l => l.status === 'failed').length,
+    delivered: (smsLogs || []).filter(l => l.status === 'delivered').length,
+    failed: (smsLogs || []).filter(l => l.status === 'failed').length,
     revenue: smsLogs.reduce((sum, l) => sum + l.clientRate, 0),
     cost: smsLogs.reduce((sum, l) => sum + l.supplierRate, 0),
     profit: smsLogs.reduce((sum, l) => sum + l.profit, 0)
@@ -38,7 +38,7 @@ export function ReportsPage() {
   // Hourly distribution
   const hourlyData = Array.from({ length: 24 }, (_, i) => {
     const hour = i.toString().padStart(2, '0') + ':00';
-    const logsInHour = smsLogs.filter(log => {
+    const logsInHour = (smsLogs || []).filter(log => {
       const logHour = new Date(log.createdAt).getHours();
       return logHour === i;
     });
@@ -53,8 +53,8 @@ export function ReportsPage() {
   });
 
   // By client
-  const clientStats = clients.map(client => {
-    const clientLogs = smsLogs.filter(l => l.clientId === client.id);
+  const clientStats = (clients || []).map(client => {
+    const clientLogs = (smsLogs || []).filter(l => l.clientId === client.id);
     return {
       name: client.clientCode,
       messages: clientLogs.length,
@@ -77,8 +77,8 @@ export function ReportsPage() {
   const statusData = [
     { name: 'Delivered', value: stats.delivered },
     { name: 'Failed', value: stats.failed },
-    { name: 'Pending', value: smsLogs.filter(l => l.status === 'pending').length },
-    { name: 'Submitted', value: smsLogs.filter(l => l.status === 'submitted').length }
+    { name: 'Pending', value: (smsLogs || []).filter(l => l.status === 'pending').length },
+    { name: 'Submitted', value: (smsLogs || []).filter(l => l.status === 'submitted').length }
   ].filter(d => d.value > 0);
 
   return (

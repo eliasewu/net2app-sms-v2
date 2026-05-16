@@ -31,7 +31,7 @@ export function UsersPage() {
     isActive: true
   });
 
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = (users || []).filter((user) => {
     const matchesSearch =
       user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -87,7 +87,7 @@ export function UsersPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">
-                {users.filter(u => u.role === 'admin' || u.role === 'super_admin').length}
+                {(users || []).filter(u => u.role === 'admin' || u.role === 'super_admin').length}
               </p>
               <p className="text-sm text-gray-500">Admins</p>
             </div>
@@ -100,7 +100,7 @@ export function UsersPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-green-600">
-                {users.filter(u => u.isActive).length}
+                {(users || []).filter(u => u.isActive).length}
               </p>
               <p className="text-sm text-gray-500">Active</p>
             </div>
@@ -113,7 +113,7 @@ export function UsersPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">
-                {users.filter(u => u.role === 'client' || u.role === 'supplier').length}
+                {(users || []).filter(u => u.role === 'client' || u.role === 'supplier').length}
               </p>
               <p className="text-sm text-gray-500">Entity Users</p>
             </div>
