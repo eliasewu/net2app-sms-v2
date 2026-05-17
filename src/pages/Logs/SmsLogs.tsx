@@ -17,7 +17,7 @@ export function SmsLogs() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 100;
 
-  const filteredLogs = useMemo(() => smsLogs.filter(log => {
+  const filteredLogs = useMemo(() => (smsLogs || []).filter(log => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q || log.messageId.toLowerCase().includes(q) || log.destinationAddr.includes(q) || log.sourceAddr.toLowerCase().includes(q) || log.clientCode.toLowerCase().includes(q) || log.supplierCode.toLowerCase().includes(q) || log.messageContent.toLowerCase().includes(q) || log.country.toLowerCase().includes(q);
     const matchStatus = filterStatus === 'all' || log.status === filterStatus;
@@ -50,9 +50,9 @@ export function SmsLogs() {
         <Card><p className="text-xs text-gray-500 uppercase">Total</p><p className="text-xl font-bold text-gray-900">{stats.total}</p></Card>
         <Card><p className="text-xs text-gray-500 uppercase">Delivered</p><p className="text-xl font-bold text-green-600">{stats.delivered}</p></Card>
         <Card><p className="text-xs text-gray-500 uppercase">Failed</p><p className="text-xl font-bold text-red-600">{stats.failed}</p></Card>
-        <Card><p className="text-xs text-gray-500 uppercase">Revenue</p><p className="text-xl font-bold text-gray-900">${stats.revenue.toFixed(4)}</p></Card>
-        <Card><p className="text-xs text-gray-500 uppercase">Cost</p><p className="text-xl font-bold text-gray-900">${stats.cost.toFixed(4)}</p></Card>
-        <Card><p className="text-xs text-gray-500 uppercase">Profit</p><p className={`text-xl font-bold ${stats.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>${stats.profit.toFixed(4)}</p></Card>
+        <Card><p className="text-xs text-gray-500 uppercase">Revenue</p><p className="text-xl font-bold text-gray-900">${(stats.revenue || 0).toFixed(4)}</p></Card>
+        <Card><p className="text-xs text-gray-500 uppercase">Cost</p><p className="text-xl font-bold text-gray-900">${(stats.cost || 0).toFixed(4)}</p></Card>
+        <Card><p className="text-xs text-gray-500 uppercase">Profit</p><p className={`text-xl font-bold ${stats.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>${(stats.profit || 0).toFixed(4)}</p></Card>
       </div>
 
       {/* Filters */}
@@ -103,8 +103,8 @@ export function SmsLogs() {
                   <td className="px-3 py-2 text-xs">{log.mcc}/{log.mnc}</td>
                   <td className="px-3 py-2 text-xs text-gray-600">{log.routeName || '—'}</td>
                   <td className="px-3 py-2 text-xs text-gray-600">{log.supplierCode}</td>
-                  <td className="px-3 py-2 text-xs text-orange-600 font-mono">${log.supplierRate.toFixed(6)}</td>
-                  <td className="px-3 py-2 text-xs text-blue-600 font-mono">${log.clientRate.toFixed(6)}</td>
+                  <td className="px-3 py-2 text-xs text-orange-600 font-mono">${(log.supplierRate || 0).toFixed(6)}</td>
+                  <td className="px-3 py-2 text-xs text-blue-600 font-mono">${(log.clientRate || 0).toFixed(6)}</td>
                   <td className="px-3 py-2 text-xs font-mono font-semibold" style={{ color: (log.clientRate - log.supplierRate) >= 0 ? '#059669' : '#dc2626' }}>${(log.clientRate - log.supplierRate).toFixed(6)}</td>
                   <td className="px-3 py-2"><StatusBadge status={log.sendResult || log.status} type="message" /></td>
                   <td className="px-3 py-2 text-xs">{log.deliverResult || '—'}</td>
@@ -139,8 +139,8 @@ export function SmsLogs() {
                 ['Type', selectedLog.msgType || 'SMS'],
                 ['Business Type', selectedLog.businessType || 'Default type'],
                 ['Send Type', selectedLog.sendType || 'SMSC'],
-                ['Cost (Supplier)', `$${selectedLog.supplierRate.toFixed(6)}`],
-                ['Pay (Client)', `$${selectedLog.clientRate.toFixed(6)}`],
+                ['Cost (Supplier)', `$${(selectedLog.supplierRate || 0).toFixed(6)}`],
+                ['Pay (Client)', `$${(selectedLog.clientRate || 0).toFixed(6)}`],
                 ['Profit', `$${(selectedLog.clientRate - selectedLog.supplierRate).toFixed(6)}`],
                 ['Route', selectedLog.routeName || selectedLog.routeId || '—'],
                 ['Channel', selectedLog.channel || selectedLog.supplierCode],

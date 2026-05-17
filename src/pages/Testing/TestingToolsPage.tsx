@@ -210,6 +210,18 @@ export function TestingToolsPage() {
         submitTime,
         deliverTime: sc.handsetReceived ? now.toISOString() : undefined,
       });
+      // Send via REAL routing engine to supplier
+      fetch('/api/sms/send', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          source: smsForm.senderId,
+          destination: smsForm.destination,
+          message: smsForm.content,
+          clientCode: client?.clientCode || 'CL_TriAngle_BR',
+          supplierCode: supplier?.supplierCode || 'SP_SMSGATEWAY'
+        })
+      }).then(r => r.json()).then(d => console.log('SMS Sent:', d));
 
       setRouteTests(prev => [{
         id: uuidv4(), msisdn: smsForm.destination, senderId: smsForm.senderId, content: smsForm.content,
