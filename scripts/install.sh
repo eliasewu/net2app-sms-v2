@@ -173,13 +173,23 @@ sed -i 's/^bind .*/bind 127.0.0.1/' /etc/redis/redis.conf
 systemctl enable redis-server && systemctl restart redis-server
 
 # ═══════════════════════════════════════════════════════════════════
-# STEP 6 — RabbitMQ
+# STEP 6 — RabbitMQ (optional - skips if fails)
 # ═══════════════════════════════════════════════════════════════════
-progress "Configuring RabbitMQ..."
-systemctl enable rabbitmq-server && systemctl start rabbitmq-server
-rabbitmqctl list_users | grep -q net2app || rabbitmqctl add_user net2app "$REDIS_PASS"
-rabbitmqctl set_user_tags net2app administrator
-rabbitmqctl set_permissions -p / net2app ".*" ".*" ".*"
+progress "Configuring RabbitMQ (optional)..."
+echo "127.0.0.1 $(hostname)" >> /etc/hosts
+echo "net2app" > /var/lib/rabbitmq/.erlang.cookie
+chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie 2>/dev/null
+chmod 400 /var/lib/rabbitmq/.erlang.cookie 2>/dev/null
+if systemctl start rabbitmq-server 2>/dev/null; then
+    systemctl enable rabbitmq-server 2>/dev/null
+    rabbitmqctl list_users 2>/dev/null | grep -q net2app || rabbitmqctl add_user net2app "$REDIS_PASS" 2>/dev/null
+    rabbitmqctl set_user_tags net2app administrator 2>/dev/null
+    rabbitmqctl set_permissions -p / net2app ".*" ".*" ".*" 2>/dev/null
+    echo -e "  ${G}RabbitMQ started${NC}"
+else
+    echo -e "  ${Y}RabbitMQ unavailable - continuing without it${NC}"
+    systemctl disable rabbitmq-server 2>/dev/null
+fi
 
 # ═══════════════════════════════════════════════════════════════════
 # STEP 7 — Node.js 20
