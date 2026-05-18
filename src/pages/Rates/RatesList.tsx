@@ -61,9 +61,9 @@ export function RatesList() {
 
   const getEntityName = (rate: Rate) => {
     if (rate.entityType === 'client') {
-      return clients.find(c => c.id === rate.entityId)?.clientCode || 'Unknown';
+      return clients.find(c => c.id === rate.entityId || c.clientCode === rate.entityId)?.clientCode || rate.entityId || 'Unknown';
     }
-    return suppliers.find(s => s.id === rate.entityId)?.supplierCode || 'Unknown';
+    return suppliers.find(s => s.id === rate.entityId || s.supplierCode === rate.entityId)?.supplierCode || rate.entityId || 'Unknown';
   };
 
 
