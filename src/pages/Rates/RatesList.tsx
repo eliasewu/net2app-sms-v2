@@ -382,8 +382,8 @@ export function RatesList() {
               >
                 <option value="">Select {formData.entityType}</option>
                 {formData.entityType === 'client'
-                  ? clients.map(c => <option key={c.id} value={c.id}>{c.clientCode}</option>)
-                  : suppliers.map(s => <option key={s.id} value={s.id}>{s.supplierCode}</option>)
+                  ? clients.map(c => <option key={c.id} value={c.clientCode || c.id}>{c.clientCode} - {c.companyName}</option>)
+                  : suppliers.map(s => <option key={s.id} value={s.supplierCode || s.id}>{s.supplierCode} - {s.companyName}</option>)
                 }
               </select>
             </div>

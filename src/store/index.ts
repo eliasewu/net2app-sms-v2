@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-const API = '/api';
+const API = window.location.protocol + '//' + window.location.host + '/api';
 
 async function fetchAPI(path: string) {
   try {
@@ -129,8 +129,8 @@ export const useStore = create<Store>((set, get) => ({
   addRoute: async (d) => { await postAPI('/routes', d); get().loadAll(); },
   deleteRoute: async (id) => { await deleteAPI(`/routes/${id}`); get().loadAll(); },
 
-  addRate: async (d) => { await postAPI('/rates', d); get().loadAll(); },
-  deleteRate: async (id) => { await deleteAPI(`/rates/${id}`); get().loadAll(); },
+  addRate: async (d) => { set(s => ({ rates: [...s.rates, {...d, id: 'temp-' + Date.now(), isActive: true, createdAt: new Date().toISOString()}] })); await postAPI('/rates', d); setTimeout(() => get().loadAll(), 500); },
+  deleteRate: async (id) => { set(s => ({ rates: s.rates.filter(r => r.id !== id) })); await deleteAPI(`/rates/${id}`); setTimeout(() => get().loadAll(), 500); },
 
   addPayment: async (d) => { await postAPI('/billing/payments', d); get().loadAll(); },
   addInvoice: async (d) => { await postAPI('/billing/invoices', d); get().loadAll(); },
